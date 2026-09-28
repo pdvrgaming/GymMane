@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Award } from '../types';
-import confetti from 'canvas-confetti';
+import confetti from '../utils/confetti';
 import { Award as AwardIcon, CheckCircle2, Lock, X } from 'lucide-react';
 
 interface MedalShelfProps {

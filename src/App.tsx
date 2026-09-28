@@ -45,7 +45,7 @@ import { ToolsScreen } from './screens/ToolsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { NotesScreen } from './screens/NotesScreen';
 import { PlacesScreen } from './screens/PlacesScreen';
-import confetti from 'canvas-confetti';
+import confetti from './utils/confetti';
 
 const allExercises: Exercise[] = exercisesData as Exercise[];
 
