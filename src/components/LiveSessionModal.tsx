@@ -47,6 +47,7 @@ export const LiveSessionModal: React.FC<LiveSessionModalProps> = ({
   const [elapsed, setElapsed] = useState(0);
   const [restTimeLeft, setRestTimeLeft] = useState<number | null>(session.restTimerSeconds);
   const [showAddExercise, setShowAddExercise] = useState(false);
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const [searchExercise, setSearchExercise] = useState('');
   const [plateCalcWeight, setPlateCalcWeight] = useState<number | null>(null);
 
@@ -235,21 +236,30 @@ export const LiveSessionModal: React.FC<LiveSessionModalProps> = ({
     onFinishSession(logged);
   };
 
+  const totalCompletedSets = session.exercises.reduce(
+    (acc, ex) => acc + ex.sets.filter((s) => s.done).length,
+    0
+  );
+
+  const handleConfirmDiscard = () => {
+    onUpdateSession(null);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-[#12100E] text-[#F3EFEA] overflow-hidden">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[#26201B] bg-[#161310] shrink-0">
+      {/* Top Bar with iOS safe area top padding */}
+      <div className="flex items-center justify-between px-4 pt-[max(0.875rem,env(safe-area-inset-top))] pb-3 border-b border-[#26201B] bg-[#161310] shrink-0">
         <button
           onClick={onMinimize}
-          className="flex items-center gap-1 text-xs font-bold text-[#A39B92] hover:text-white px-2.5 py-1.5 rounded-lg bg-[#221D18]"
+          className="flex items-center gap-1.5 text-xs font-bold text-[#A39B92] hover:text-white px-3 py-1.5 rounded-xl bg-[#221D18] active:scale-95 transition"
           title="Minimize Workout"
         >
           <Minimize2 className="w-4 h-4" />
-          <span>Minimize</span>
+          <span className="hidden xs:inline">Minimize</span>
         </button>
 
         <div className="flex flex-col items-center">
-          <span className="text-xs font-bold text-[#A39B92] tracking-wider uppercase">
+          <span className="text-[11px] font-bold text-[#A39B92] tracking-wider uppercase max-w-[130px] sm:max-w-[200px] truncate">
             {session.routineName || 'Live Session'}
           </span>
           <div className="flex items-center gap-1.5 text-base font-extrabold text-[#D9A184]">
@@ -260,9 +270,11 @@ export const LiveSessionModal: React.FC<LiveSessionModalProps> = ({
 
         <button
           onClick={handleFinishWorkout}
-          className="px-3.5 py-1.5 rounded-full bg-[#8FA377] text-[#12100E] font-bold text-xs hover:bg-[#A1B887] transition shadow-md active:scale-95"
+          className="px-3.5 py-1.5 rounded-xl bg-[#8FA377] text-[#12100E] font-black text-xs hover:bg-[#A1B887] transition shadow-md active:scale-95 flex items-center gap-1.5"
+          title="Finish Workout"
         >
-          Finish
+          <Check className="w-4 h-4 stroke-[3]" />
+          <span>Finish</span>
         </button>
       </div>
 
@@ -449,8 +461,65 @@ export const LiveSessionModal: React.FC<LiveSessionModalProps> = ({
               <Plus className="w-4 h-4" />
               <span>Add Set</span>
             </button>
+
+            {/* End-of-Workout Summary & Finish Card */}
+            <div className="pt-6 pb-2 space-y-3">
+              <div className="p-4 rounded-3xl bg-[#181512] border border-[#2B231D] text-center space-y-3 shadow-xl">
+                <div className="flex items-center justify-around py-2 border-b border-[#241F1A]">
+                  <div>
+                    <span className="block text-lg font-black text-white">{session.exercises.length}</span>
+                    <span className="text-[10px] text-[#A39B92] uppercase font-bold tracking-wider">Exercises</span>
+                  </div>
+                  <div className="h-8 w-px bg-[#26201B]" />
+                  <div>
+                    <span className="block text-lg font-black text-[#8FA377]">{totalCompletedSets}</span>
+                    <span className="text-[10px] text-[#A39B92] uppercase font-bold tracking-wider">Sets Done</span>
+                  </div>
+                  <div className="h-8 w-px bg-[#26201B]" />
+                  <div>
+                    <span className="block text-lg font-black text-[#D9A184]">{formatTime(elapsed)}</span>
+                    <span className="text-[10px] text-[#A39B92] uppercase font-bold tracking-wider">Duration</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleFinishWorkout}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-[#8FA377] text-[#12100E] font-black text-sm flex items-center justify-center gap-2 shadow-lg hover:bg-[#A1B887] active:scale-[0.98] transition cursor-pointer"
+                >
+                  <Check className="w-5 h-5 stroke-[3]" />
+                  <span>Finish & Log Workout</span>
+                </button>
+
+                <button
+                  onClick={() => setShowDiscardConfirm(true)}
+                  className="w-full py-2 text-xs font-bold text-[#706860] hover:text-[#E05A5A] transition flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Discard Workout</span>
+                </button>
+              </div>
+            </div>
           </div>
         )}
+      </div>
+
+      {/* Persistent Bottom Bar with iOS safe area padding */}
+      <div className="border-t border-[#26201B] bg-[#161310]/95 backdrop-blur-md px-4 py-3 pb-[max(0.875rem,env(safe-area-inset-bottom))] flex items-center gap-3 shrink-0">
+        <button
+          onClick={() => setShowAddExercise(true)}
+          className="flex-1 py-3 px-3 rounded-2xl bg-[#241F1A] border border-[#3E342B] text-xs font-bold text-white hover:bg-[#2F2721] transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+        >
+          <Plus className="w-4 h-4 text-[#D9A184]" />
+          <span>Add Exercise</span>
+        </button>
+
+        <button
+          onClick={handleFinishWorkout}
+          className="flex-1 py-3 px-3 rounded-2xl bg-[#8FA377] text-[#12100E] text-sm font-black hover:bg-[#A1B887] transition shadow-lg flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+        >
+          <Check className="w-4 h-4 stroke-[3]" />
+          <span>Finish Workout</span>
+        </button>
       </div>
 
       {/* Add Exercise Modal */}
@@ -543,6 +612,37 @@ export const LiveSessionModal: React.FC<LiveSessionModalProps> = ({
             >
               Done
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Discard Workout Confirmation Modal */}
+      {showDiscardConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm rounded-3xl bg-[#1A1714] border border-[#3E342B] p-5 shadow-2xl text-center space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-[#3B2020] text-[#E05A5A] flex items-center justify-center mx-auto">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-white">Discard Workout?</h3>
+              <p className="text-xs text-[#A39B92] mt-1.5 leading-relaxed">
+                Are you sure you want to exit? All recorded sets and reps for this session will be lost.
+              </p>
+            </div>
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={handleConfirmDiscard}
+                className="w-full py-3 rounded-xl bg-[#E05A5A] text-white font-bold text-xs hover:bg-[#C94747] transition cursor-pointer active:scale-95"
+              >
+                Yes, Discard Workout
+              </button>
+              <button
+                onClick={() => setShowDiscardConfirm(false)}
+                className="w-full py-2.5 rounded-xl bg-[#241F1A] border border-[#3A3026] text-[#A39B92] font-bold text-xs hover:text-white transition cursor-pointer active:scale-95"
+              >
+                Keep Training
+              </button>
+            </div>
           </div>
         </div>
       )}

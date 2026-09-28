@@ -28,7 +28,7 @@ export const RestTimerFloating: React.FC<RestTimerFloatingProps> = ({ session, o
   };
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-40 max-w-md mx-auto animate-fade-in">
+    <div className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 max-w-md mx-auto animate-fade-in">
       <div
         onClick={onResume}
         className="flex items-center justify-between p-3 rounded-2xl bg-[#1C1814]/95 border border-[#3E342B] backdrop-blur-md shadow-2xl cursor-pointer hover:bg-[#25201A] transition active:scale-[0.98]"

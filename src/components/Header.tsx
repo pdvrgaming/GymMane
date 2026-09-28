@@ -8,7 +8,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenTools }) => {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-[#12100E]/90 backdrop-blur-md border-b border-[#241F1A]">
+    <header className="sticky top-0 z-30 flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 bg-[#12100E]/95 backdrop-blur-md border-b border-[#241F1A]">
       <div className="flex items-center gap-2.5">
         <img
           src="./icon.png"
