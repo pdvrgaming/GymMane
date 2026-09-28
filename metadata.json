@@ -1,0 +1,6 @@
+{
+  "name": "GymMane — Lift. Log it. Grow.",
+  "description": "A free, offline-first gym log and workout tracker PWA for Android, iOS and Web. Tap the muscles, log sets, track 1RM, plate math, body measurements, and 20 medals with complete privacy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
